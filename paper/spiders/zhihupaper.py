@@ -10,7 +10,7 @@ import copy
 
 class ZhihupaperSpider(Spider):
     name = 'zhihupaper'
-    # allowed_domains = ['www.zhihu.com']
+    
     start_urls = ['http://www.zhihu.com/']
 
     def start_requests(self): 
