@@ -33,7 +33,7 @@ LOG_LEVEL='WARNING'
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -66,6 +66,7 @@ LOG_LEVEL='WARNING'
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'paper.pipelines.PaperPipeline': 300,
+   'paper.pipelines.InputmongodbPipeline': 299,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
