@@ -25,7 +25,6 @@ class PaperItem(scrapy.Item):
     q_created_time= scrapy.Field() #问题发布时间
     q_title = scrapy.Field() #问题标题
     q_id = scrapy.Field() #问题编号
-    q_tags = scrapy.Field() #问题标签
     can_comment= scrapy.Field() #是否设置评论权限
     author_headline= scrapy.Field() #回答者资料标题
     author_industry= scrapy.Field() #回答者所在行业
@@ -55,6 +54,5 @@ class PaperItem(scrapy.Item):
     follow_columns= scrapy.Field() #回答者关注的专栏数量
     follow_questions= scrapy.Field() #回答者关注的问题数量
     follow_favorites= scrapy.Field() #回答者关注的收藏夹数量
-     
 
     
