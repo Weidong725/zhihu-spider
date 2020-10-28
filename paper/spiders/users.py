@@ -4,7 +4,6 @@ import pandas as pd
 from pprint import pprint
 from paper.items import PaperItem
 import re
-import time
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError
 from twisted.internet.error import TimeoutError, TCPTimedOutError
@@ -16,35 +15,30 @@ class UsersSpider(Spider):
     name = 'users'
     # allowed_domains = ['zhihu.com']
     start_urls = ['http://zhihu.com/']
-    # client = MongoClient('localhost', 27017)  # 连接mongodb数据库
-    # db = client.zhihu  # 获取数据库
-    # info = db.zhihu_info  # 获取数据库中的表格
-    # user = db.zhihu_users
-    # df_info = pd.DataFrame(info.find())
-    # df_user = pd.DataFrame(user.find())
-    # info_token = df_info.url_token.to_list()
-    # user_token = df_user.url_token.to_list()
-    # url_token = list(set(info_token) ^ set(user_token))
-    # print(url_token)
+    # df = pd.read_csv(r'C:\Users\WD\Desktop\url_token.csv')
+    # url_token = df.url_token
     custom_settings = {
-        'DOWNLOADER_MIDDLEWARES': {'paper.middlewares.ProcessAllExceptionMiddleware': 544, }
+        'DOWNLOADER_MIDDLEWARES': {
+            # 'paper.middlewares.IpProxyDownloadMiddleware': 543,
+            'paper.middlewares.UserAgentDownloadMiddleware': 305}
     }
 
     def start_requests(self):
-        # for i in self.url_token:
-        #     if i != '':
-        url = 'https://www.zhihu.com/people/'+'bei-jing-yun-tu-zhi-lian-jiao-yu-ke-ji'
-        yield Request(
-            url, callback=self.parse, errback=self.errback
-        )
+        for i in self.url_token:
+            if i != '':
+                url = 'https://www.zhihu.com/people/'+i
+                yield Request(
+                    url, callback=self.parse, errback=self.errback
+                )
 
     def parse(self, response):
-        div_list = response.xpath("//div[@itemprop='people']")
+        div_list = response.xpath("//main[@role='main']/div")
+        # div_list = response.xpath("//div[@itemprop='people']")
         item = PaperItem()
         for div in div_list:
             # -------标题信息栏-----#
             url_token = div.xpath(
-                "//ul[@role='tablist']/li[@class='Tabs-item Tabs-item--noMeta']/a[@class='Tabs-link is-active']/@href").extract_first()
+                "//meta[@itemprop='url']/@content").extract_first()
             author_name = div.xpath(
                 "//span[@class='ProfileHeader-name']/text()").extract_first()
             author_headline = div.xpath(
@@ -53,8 +47,13 @@ class UsersSpider(Spider):
                 "//div[@class='ProfileHeader-infoItem'][1]/text()").extract()
             author_academic = div.xpath(
                 "//div[@class='ProfileHeader-infoItem'][2]/text()").extract()
-            url_token = re.findall(r'/people/(.*)', url_token)
-            item['url_token'] = url_token[0]
+            if url_token is not None:
+                if "/org/" in url_token:
+                    url_token = re.findall(r'/org/(.*)', url_token)
+                    item['url_token'] = url_token[0]
+                else:
+                    url_token = re.findall(r'/people/(.*)', url_token)
+                    item['url_token'] = url_token[0]
             item['author_name'] = author_name
             item['author_headline'] = 1 if author_headline != [] else 0
             item['author_industry'] = 1 if author_industry != [] else 0

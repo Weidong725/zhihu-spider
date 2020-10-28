@@ -58,3 +58,4 @@ class PaperItem(scrapy.Item):
     url_token = scrapy.Field()  # 构造连接id
     com_content = scrapy.Field()
     reviewer_token = scrapy.Field()
+    type = scrapy.Field()  # 用户类型

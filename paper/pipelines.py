@@ -24,7 +24,7 @@ class InputmongodbPipeline(object):
                 '$setOnInsert': postItem}, upsert=True)
             return item  # 会在控制台输出原item数据，可以选择不写
         elif spider.name == 'users':
-            self.post = db.zhihu_users
+            self.post = db.user
             postItem = dict(item)  # 把item转化成字典形式
             self.post.update({'content': postItem.get('url_token')}, {
                 '$setOnInsert': postItem}, upsert=True)
@@ -34,6 +34,18 @@ class InputmongodbPipeline(object):
             postItem = dict(item)  # 把item转化成字典形式
             self.post.update({'com_content': postItem.get('com_content'), 'reviewer_token': postItem.get(
                 'reviewer_token')}, {'$setOnInsert': postItem}, upsert=True)
+            return item  # 会在控制台输出原item数据，可以选择不写
+        elif spider.name == 'q_id':
+            self.post = db.zhihu_qid
+            postItem = dict(item)  # 把item转化成字典形式
+            self.post.update({'q_id': postItem.get('q_id')}, {
+                             '$setOnInsert': postItem}, upsert=True)
+            return item  # 会在控制台输出原item数据，可以选择不写
+        elif spider.name == 'h-index':
+            self.post = db.h_index
+            postItem = dict(item)  # 把item转化成字典形式
+            self.post.update({'url_token': postItem.get('url_token'), 'voteup_count': postItem.get('voteup_count'), 'q_id': postItem.get('q_id')}, {
+                             '$setOnInsert': postItem}, upsert=True)
             return item  # 会在控制台输出原item数据，可以选择不写
 
 
